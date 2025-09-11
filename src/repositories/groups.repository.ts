@@ -1,7 +1,15 @@
 import { prisma } from "../infra/db/prisma";
-import { CreateGroupDto } from "../dtos/group.dtos";
+import { CreateGroupDto, FindGroupDto } from "../dtos/group.dtos";
 import { Group } from "../models/group.model";
 import { NotFoundError } from "../utils/errors";
+
+export async function findUnique(data: FindGroupDto): Promise<Group | null> {
+    const group = await prisma.group.findUnique({
+        where: { id: data.groupId },
+    });
+    
+    return group;
+}
 
 export async function createGroup(data: CreateGroupDto): Promise<Group> {
     return await prisma.$transaction(async (tx) => {
