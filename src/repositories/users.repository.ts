@@ -1,6 +1,14 @@
 import { prisma } from "../infra/db/prisma";
-import { CreateUserDto } from "../dtos/user.dtos";
+import { CreateUserDto, FindUserDto } from "../dtos/user.dtos";
 import { User } from "../models/user.model";
+
+export async function findUnique(data: FindUserDto): Promise<User | null> {
+    const user = await prisma.user.findUnique({
+        where: { id: data.userId },
+    });
+
+    return user;
+}
 
 export async function createUser(data: CreateUserDto): Promise<User> {
     try {
@@ -18,7 +26,7 @@ export async function createUser(data: CreateUserDto): Promise<User> {
             createdAt: created.createdAt,
             updatedAt: created.updatedAt,
         };
-        
+
         return user;
     } catch (error) {
         throw error;
