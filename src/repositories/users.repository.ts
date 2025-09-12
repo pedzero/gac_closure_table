@@ -1,7 +1,6 @@
 import { prisma } from "../infra/db/prisma";
 import { CreateUserDto, FindUserDto } from "../dtos/user.dtos";
 import { User } from "../models/user.model";
-import { UserGroupDto } from "../dtos/user-group.dtos";
 import { UserOrganization } from "../models/organization.model";
 
 export async function findUnique(data: FindUserDto): Promise<User | null> {
@@ -37,14 +36,14 @@ export async function createUser(data: CreateUserDto): Promise<User> {
 
 export async function getUserOrganizations(data: FindUserDto): Promise<UserOrganization[]> {
     const result = await prisma.$queryRaw<UserOrganization[]>`
-    SELECT g.id, g.name, MIN(ugc.depth) as depth
+    SELECT g.id, g.name, MIN(ugc.depth) + 1 AS depth
     FROM user_groups ug
     JOIN group_closure ugc ON ug."groupId" = ugc."descendantId"
     JOIN groups g ON g.id = ugc."ancestorId"
     WHERE ug."userId" = ${data.userId}::uuid
-
+    
     GROUP BY g.id, g.name
-    ORDER BY MIN(ugc.depth) ASC;
+    ORDER BY depth ASC;
   `;
     return result;
 }
