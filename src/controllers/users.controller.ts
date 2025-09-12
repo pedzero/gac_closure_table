@@ -27,3 +27,13 @@ export async function assignUserToGroup(request: Request, response: Response, ne
         next(error);
     }
 }
+
+export async function getUserOrganizations(request: Request, response: Response, next: NextFunction) {
+    try {
+        const { id: userId } = request.params;
+        const organizations = await UsersService.getUserOrganizations({ userId });
+        response.status(200).json(organizations);
+    } catch (error) {
+        next(error);
+    }
+}

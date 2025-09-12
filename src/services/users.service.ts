@@ -1,9 +1,10 @@
-import { CreateUserDto } from "../dtos/user.dtos";
+import { CreateUserDto, FindUserDto } from "../dtos/user.dtos";
 import { UserGroupDto } from "../dtos/user-group.dtos";
 import * as UsersRepository from "../repositories/users.repository";
 import * as GroupsRepository from "../repositories/groups.repository";
 import * as userGroupRepository from "../repositories/user-group.repository";
 import { ConflictError, NotFoundError } from "../utils/errors";
+import { UserOrganization } from "../models/organization.model";
 
 export async function createUser(data: CreateUserDto) {
     const user = await UsersRepository.createUser(data);
@@ -30,4 +31,14 @@ export async function addUserToGroup(data: UserGroupDto): Promise<void> {
     }
 
     await userGroupRepository.addUserToGroup(data);
+}
+
+export async function getUserOrganizations(data: FindUserDto): Promise<UserOrganization[]> {
+    // check if user exists
+    const user = await UsersRepository.findUnique(data);
+    if (!user) {
+        throw new NotFoundError(`User ${data.userId} not found`);
+    }
+
+    return UsersRepository.getUserOrganizations(data);
 }
