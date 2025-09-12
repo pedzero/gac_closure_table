@@ -21,3 +21,13 @@ export async function getGroupAncestors(request: Request, response: Response, ne
         next(error);
     }
 }
+
+export async function getGroupDescendants(request: Request, response: Response, next: NextFunction) {
+    try {
+        const { id: groupId } = request.params;
+        const descendants = await GroupsService.getGroupDescendants({ groupId });
+        response.status(200).json(descendants);
+    } catch (error) {
+        next(error);
+    }
+}

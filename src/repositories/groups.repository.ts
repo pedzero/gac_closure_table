@@ -82,3 +82,14 @@ export async function getGroupAncestors(data: FindGroupDto): Promise<Node[]> {
     ORDER BY gc.depth ASC;
   `;
 }
+
+export async function getGroupDescendants(data: FindGroupDto): Promise<Node[]> {
+    return prisma.$queryRaw<Node[]>`
+    SELECT g.id, g.name, gc.depth
+    FROM group_closure gc
+    JOIN groups g ON g.id = gc."descendantId"
+    WHERE gc."ancestorId" = ${data.groupId}::uuid
+      AND gc.depth >= 1
+    ORDER BY gc.depth ASC;
+  `;
+}

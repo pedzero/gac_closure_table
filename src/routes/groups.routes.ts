@@ -5,6 +5,6 @@ const router = Router();
 
 router.post("/", GroupsController.createGroup);
 router.get("/:id/ancestors", GroupsController.getGroupAncestors);
-//router.get("/:id/descendants", GroupsController.getGroupAncestors);
+router.get("/:id/descendants", GroupsController.getGroupDescendants);
 
 export default router;

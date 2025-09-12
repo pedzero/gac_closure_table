@@ -17,3 +17,13 @@ export async function getGroupAncestors(data: FindGroupDto): Promise<Node[]> {
 
     return GroupsRepository.getGroupAncestors(data);
 }
+
+export async function getGroupDescendants(data: FindGroupDto): Promise<Node[]> {
+    // check if group exists
+    const group: Group | null = await GroupsRepository.findUnique(data);
+    if (!group) {
+        throw new NotFoundError(`Group ${data.groupId} not found`);
+    }
+
+    return GroupsRepository.getGroupDescendants(data);
+}
