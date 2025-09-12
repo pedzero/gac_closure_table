@@ -3,8 +3,9 @@ import { CreateGroupDto, FindGroupDto } from "../dtos/group.dtos";
 import * as GroupsRepository from "../repositories/groups.repository";
 import { NotFoundError } from "../utils/errors";
 
-export async function createGroup(data: CreateGroupDto) {
-    const group = await GroupsRepository.createGroup(data);
+export async function createGroup(data: CreateGroupDto): Promise<Group> {
+    const group: Group = await GroupsRepository.createGroup(data);
+
     return group;
 }
 
