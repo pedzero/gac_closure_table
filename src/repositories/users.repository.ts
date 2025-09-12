@@ -5,7 +5,7 @@ import { UserGroupDto } from "../dtos/user-group.dtos";
 import { UserOrganization } from "../models/organization.model";
 
 export async function findUnique(data: FindUserDto): Promise<User | null> {
-    const user = await prisma.user.findUnique({
+    const user: User | null = await prisma.user.findUnique({
         where: { id: data.userId },
     });
 
@@ -14,7 +14,7 @@ export async function findUnique(data: FindUserDto): Promise<User | null> {
 
 export async function createUser(data: CreateUserDto): Promise<User> {
     try {
-        const created = await prisma.user.create({
+        const created: User = await prisma.user.create({
             data: {
                 name: data.name,
                 email: data.email,
