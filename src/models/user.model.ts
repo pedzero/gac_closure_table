@@ -5,3 +5,9 @@ export interface User {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export type UserWithType = User & { type: "USER" };
+
+export function withUserType(user: User): UserWithType {
+    return { ...user, type: "USER" };
+}
