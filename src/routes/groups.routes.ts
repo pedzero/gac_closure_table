@@ -4,5 +4,7 @@ import * as GroupsController from "../controllers/groups.controller";
 const router = Router();
 
 router.post("/", GroupsController.createGroup);
+router.get("/:id/ancestors", GroupsController.getGroupAncestors);
+//router.get("/:id/descendants", GroupsController.getGroupAncestors);
 
 export default router;

@@ -6,5 +6,6 @@ const router = Router();
 
 router.use("/users", usersRoutes);
 router.use("/groups", groupsRoutes);
+router.use("/nodes", groupsRoutes);
 
 export default router;

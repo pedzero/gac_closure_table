@@ -7,7 +7,7 @@ export async function findUnique(data: FindGroupDto): Promise<Group | null> {
     const group = await prisma.group.findUnique({
         where: { id: data.groupId },
     });
-    
+
     return group;
 }
 
@@ -70,4 +70,15 @@ export async function createGroup(data: CreateGroupDto): Promise<Group> {
 
         return group;
     });
+}
+
+export async function getGroupAncestors(data: FindGroupDto): Promise<Node[]> {
+    return prisma.$queryRaw<Node[]>`
+    SELECT g.id, g.name, gc.depth
+    FROM group_closure gc
+    JOIN groups g ON g.id = gc."ancestorId"
+    WHERE gc."descendantId" = ${data.groupId}::uuid
+      AND gc.depth >= 1
+    ORDER BY gc.depth ASC;
+  `;
 }
