@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as GroupsController from "../controllers/groups.controller";
 
-const router = Router();
+const router: Router = Router();
 
 router.post("/", GroupsController.createGroup);
 router.get("/:id/ancestors", GroupsController.getGroupAncestors);

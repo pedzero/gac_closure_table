@@ -1,7 +1,7 @@
 import { Router } from "express";
 import * as UsersController from "../controllers/users.controller";
 
-const router = Router();
+const router: Router = Router();
 
 router.post("/", UsersController.createUser);
 router.post("/:id/groups", UsersController.assignUserToGroup);
