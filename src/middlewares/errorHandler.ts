@@ -1,29 +1,38 @@
 import { Request, Response, NextFunction } from "express";
-import { AppError } from "../utils/errors";
+import { AppError, UnprocessableEntityError } from "../utils/errors";
+import { handlePrismaError } from "../utils/handlePrismaError";
 import { ZodError } from "zod";
 
-export function errorHandler(error: unknown, request: Request, response: Response, _next: NextFunction) {
+export function errorHandler(error: unknown, request: Request, response: Response, _next: NextFunction): Response {
+    let formattedError: AppError;
+
     if (error instanceof AppError) {
-        return response.status(error.status).json({
-            status: "error",
-            message: error.message,
-            code: error.code ?? undefined,
-        });
+        formattedError = error;
     }
 
-    if (error instanceof ZodError) {
-        return response.status(400).json({
-            status: "error",
-            issues: error.issues.map(issue => ({
-                path: issue.path.join('.'),
-                message: issue.message
-            }))
-        });
+    else if (error instanceof ZodError) {
+        formattedError = new UnprocessableEntityError("Validation failed", error.issues.map(issue => ({
+            path: issue.path.join("."),
+            message: issue.message,
+        })));
     }
 
-    console.error("Unhandled error:", error);
-    return response.status(500).json({
+    else {
+        const prismaError = handlePrismaError(error);
+        if (prismaError) {
+            formattedError = prismaError;
+        } else {
+            console.error("Unhandled error:", error);
+            formattedError = new AppError("Internal server error", 500);
+        }
+    }
+
+    const responseBody: Record<string, unknown> = {
         status: "error",
-        message: "Internal server error",
-    });
+        message: formattedError.message,
+    };
+    if (formattedError.code) responseBody.code = formattedError.code;
+    if (formattedError.issues) responseBody.issues = formattedError.issues;
+
+    return response.status(formattedError.status).json(responseBody);
 }
