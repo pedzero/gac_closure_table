@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as GroupsService from "../services/groups.service";
 import { CreateGroupDto, createGroupSchema, FindGroupDto, findGroupSchema } from "../dtos/group.dtos";
-import { Group } from "@prisma/client";
+import { Group } from "../models/group.model";
 
 export async function createGroup(request: Request, response: Response, next: NextFunction): Promise<void> {
     try {

@@ -5,7 +5,7 @@ import * as GroupsRepository from "../repositories/groups.repository";
 import * as userGroupRepository from "../repositories/user-group.repository";
 import { ConflictError, NotFoundError } from "../utils/errors";
 import { UserOrganization } from "../models/organization.model";
-import { User } from "@prisma/client";
+import { User } from "../models/user.model";
 import { Group } from "../models/group.model";
 import { UserGroup } from "../models/user-group.model";
 

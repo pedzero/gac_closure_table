@@ -1,4 +1,4 @@
-import { Group } from "@prisma/client";
+import { Group } from "../models/group.model";
 import { CreateGroupDto, FindGroupDto } from "../dtos/group.dtos";
 import * as GroupsRepository from "../repositories/groups.repository";
 import { NotFoundError } from "../utils/errors";
