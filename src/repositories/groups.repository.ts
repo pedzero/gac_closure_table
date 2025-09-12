@@ -2,9 +2,10 @@ import { prisma } from "../infra/db/prisma";
 import { CreateGroupDto, FindGroupDto } from "../dtos/group.dtos";
 import { Group } from "../models/group.model";
 import { NotFoundError } from "../utils/errors";
+import { GroupClosure } from "../models/group-closure.model";
 
 export async function findUnique(data: FindGroupDto): Promise<Group | null> {
-    const group = await prisma.group.findUnique({
+    const group: Group | null = await prisma.group.findUnique({
         where: { id: data.groupId },
     });
 
@@ -15,17 +16,17 @@ export async function createGroup(data: CreateGroupDto): Promise<Group> {
     return await prisma.$transaction(async (tx) => {
         // parantId validation
         if (data.parentId) {
-            const parentExists = await tx.group.findUnique({
+            const parentExists: Group | null = await tx.group.findUnique({
                 where: { id: data.parentId },
             });
 
             if (!parentExists) {
-                throw new NotFoundError(`Parent group with id=${data.parentId} does not exist`);
+                throw new NotFoundError(`Parent group ${data.parentId} does not exist`);
             }
         }
 
         // create group
-        const created = await tx.group.create({
+        const created: Group = await tx.group.create({
             data: {
                 name: data.name,
                 parentId: data.parentId || null,
@@ -44,12 +45,12 @@ export async function createGroup(data: CreateGroupDto): Promise<Group> {
         // if has parent, create closure entries
         if (data.parentId) {
             // get all ancestors of the parent
-            const parentAncestors = await tx.groupClosure.findMany({
+            const parentAncestors: GroupClosure[] = await tx.groupClosure.findMany({
                 where: { descendantId: data.parentId },
             });
 
             // create closure entries for the new group
-            const closureInserts = parentAncestors.map((ancestor) => ({
+            const closureInserts: GroupClosure[] = parentAncestors.map((ancestor: GroupClosure) => ({
                 ancestorId: ancestor.ancestorId,
                 descendantId: created.id,
                 depth: ancestor.depth + 1,
