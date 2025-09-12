@@ -5,3 +5,9 @@ export interface Group {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export type GroupWithType = Group & { type: "GROUP" };
+
+export function withGroupType(user: Group): GroupWithType {
+    return { ...user, type: "GROUP" };
+}

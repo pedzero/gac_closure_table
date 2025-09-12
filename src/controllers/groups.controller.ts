@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import * as GroupsService from "../services/groups.service";
 import { CreateGroupDto, createGroupSchema, FindGroupDto, findGroupSchema } from "../dtos/group.dtos";
-import { Group } from "../models/group.model";
+import { GroupWithType } from "../models/group.model";
 
 export async function createGroup(request: Request, response: Response, next: NextFunction): Promise<void> {
     try {
         const dto: CreateGroupDto = createGroupSchema.parse(request.body);
-        const group: Group = await GroupsService.createGroup(dto);
+        const group: GroupWithType = await GroupsService.createGroup(dto);
         response.status(201).json(group);
     } catch (error) {
         next(error);
@@ -15,7 +15,7 @@ export async function createGroup(request: Request, response: Response, next: Ne
 
 export async function getGroupAncestors(request: Request, response: Response, next: NextFunction): Promise<void> {
     try {
-        const dto: FindGroupDto = findGroupSchema.parse(request.params);
+        const dto: FindGroupDto = findGroupSchema.parse({ groupId: request.params.id });
         const ancestors: Node[] = await GroupsService.getGroupAncestors(dto);
         response.status(200).json(ancestors);
     } catch (error) {
@@ -25,7 +25,7 @@ export async function getGroupAncestors(request: Request, response: Response, ne
 
 export async function getGroupDescendants(request: Request, response: Response, next: NextFunction): Promise<void> {
     try {
-        const dto: FindGroupDto = findGroupSchema.parse(request.params);
+        const dto: FindGroupDto = findGroupSchema.parse({ groupId: request.params.id });
         const descendants: Node[] = await GroupsService.getGroupDescendants(dto);
         response.status(200).json(descendants);
     } catch (error) {
