@@ -3,7 +3,7 @@ import { UserGroupDto } from "../dtos/user-group.dtos";
 import * as UsersRepository from "../repositories/users.repository";
 import * as GroupsRepository from "../repositories/groups.repository";
 import * as userGroupRepository from "../repositories/user-group.repository";
-import { ConflictError, NotFoundError } from "../utils/errors";
+import { ConflictError, NotFoundError, UnprocessableEntityError } from "../utils/errors";
 import { UserOrganization } from "../models/organization.model";
 import { User, UserWithType, withUserType } from "../models/user.model";
 import { Group } from "../models/group.model";
@@ -19,6 +19,11 @@ export async function addUserToGroup(data: UserGroupDto): Promise<void> {
     // check if user exists
     const user: User | null = await UsersRepository.findUnique({ userId: data.userId });
     if (!user) {
+        const groupUsedAsUser: Group | null = await GroupsRepository.findUnique({ groupId: data.userId });
+        // checks if the ID belongs to a group
+        if (groupUsedAsUser) {
+            throw new UnprocessableEntityError(`ID ${data.userId} belongs to a group`);
+        }
         throw new NotFoundError(`User ${data.userId} not found`);
     }
 
